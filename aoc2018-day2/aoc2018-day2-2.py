@@ -1,9 +1,5 @@
 def main():
-  data = open('./aoc2018-day2.data', "r")
-
-  strings = []
-  for line in data:
-    strings.append(line[:-1])
+  strings = [l[:-1] for l in open('./aoc2018-day2.data', "r")]
 
   for i in range(0, len(strings), 1):
     for j in range(i + 1, len(strings), 1): # TODO: clumsy
