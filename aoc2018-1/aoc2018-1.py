@@ -1,1 +1,0 @@
-print(sum([int(l) for l in open('./aoc2018-1.data', "r")]))
