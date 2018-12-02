@@ -1,0 +1,1 @@
+print(sum([int(l) for l in open('./aoc2018-day1.data', "r")]))
