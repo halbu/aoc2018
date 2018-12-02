@@ -7,11 +7,11 @@ def main():
 
   for i in range(0, len(strings), 1):
     for j in range(i + 1, len(strings), 1): # TODO: clumsy
-      if compare(strings[i], strings[j]) == 1:
+      if hamming_distance(strings[i], strings[j]) == 1:
         get_common_characters(strings[i], strings[j])
         exit()
 
-def compare(str1, str2):
+def hamming_distance(str1, str2):
   hamming_distance = 0
   for i in range(0, len(str1), 1):
     if str1[i] != str2[i]:
