@@ -35,12 +35,8 @@ for line in data:
     datemap[datestr]['guard_number'] = tokens[len(tokens)-3]
 
   # Mark the minutes on the `minutes` array as 1 (guard is awake) or 2 (guard is asleep)
-  if action == "begins" or action == "wakes":
-    for i in range(int(minute), 60, 1):
-      datemap[datestr]['minutes'][i] = 1
-  elif action == "falls":
-    for i in range(int(minute), 60, 1):
-      datemap[datestr]['minutes'][i] = 2
+  for i in range(int(minute), 60, 1):
+    datemap[datestr]['minutes'][i] = 1 if action in ["begins", "wakes"] else 2
 
 # Run through datemap and build a new dict, where key = guard number, value = array of int[60] representing minutes
 # For each entry in the datemap, look up that entry in the dict and increment every minute in the array where that
