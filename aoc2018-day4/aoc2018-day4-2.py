@@ -39,8 +39,8 @@ for line in data:
     datemap[datestr]['minutes'][i] = 1 if action in ["begins", "wakes"] else 2
 
 # Run through datemap and build a new dict, where key = guard number, value = array of int[60] representing minutes
-# For each entry in the datemap, look up that entry in the dict and increment every minute in the array where that
-# guard was observed to be asleep
+# For each entry in the datemap, look up the associated guard in the new dict and increment every minute in the array
+# where that guard was observed to be asleep
 guard_sleep_map = {}
 for c in datemap.keys():
   guard_number = datemap[c]['guard_number'][1:]
