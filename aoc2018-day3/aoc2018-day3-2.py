@@ -1,31 +1,17 @@
 fabric = []
 
 def main():
-  data = [l for l in open('./aoc2018-day3.data', "r")]
-
   for i in range (1, 1000, 1):
     fabric.append([0] * 1000)
 
-  for line in data:
-    process_claim(line)
+  for line in [l for l in open('./aoc2018-day3.data', "r")]:
+    rect = rectanglize(line)
+    tag_square_on_map(rect['x'], rect['y'], rect['w'], rect['h'])
 
-  for line in data:
+  for line in [l for l in open('./aoc2018-day3.data', "r")]:
     if find_intact_claim(line):
       print(line)
       exit()
-
-def process_claim(str):
-  tokens = str.split(" ")
-
-  loc = tokens[2][:-1]
-  size = tokens[3]
-
-  x = int(loc.split(",")[0])
-  y = int(loc.split(",")[1])
-  w = int(size.split("x")[0])
-  h = int(size.split("x")[1])
-
-  tag_square_on_map(x, y, w, h)
 
 def tag_square_on_map(x, y, w, h):
   for i in range (x, (x + w), 1):
@@ -35,25 +21,29 @@ def tag_square_on_map(x, y, w, h):
       else:
         fabric[i][j] = 2
 
-def find_intact_claim(str):
-  tokens = str.split(" ")
+def find_intact_claim(claim_string):
+  rect = rectanglize(claim_string)
+  
+  for i in range (rect['x'], (rect['x'] + rect['w']), 1):
+    for j in range (rect['y'], (rect['y'] + rect['h']), 1):
+      if (fabric[i][j] == 2):
+        return False
+  
+  return True
 
-  # TODO: DRY
+def rectanglize(claim_string): # I know
+  tokens = claim_string.split(" ")
+
   loc = tokens[2][:-1]
   size = tokens[3]
+  output = {}
 
-  x = int(loc.split(",")[0])
-  y = int(loc.split(",")[1])
-  w = int(size.split("x")[0])
-  h = int(size.split("x")[1])
-  
-  is_valid_claim = True
-  for i in range (x, (x + w), 1):
-    for j in range (y, (y + h), 1):
-      if (fabric[i][j] == 2):
-        is_valid_claim = False
-  
-  return is_valid_claim
+  output['x'] = int(loc.split(",")[0])
+  output['y'] = int(loc.split(",")[1])
+  output['w'] = int(size.split("x")[0])
+  output['h'] = int(size.split("x")[1])
+
+  return output
 
 if __name__ == '__main__':
   main()
