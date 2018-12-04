@@ -37,50 +37,49 @@ for line in data:
 
   # Mark the minutes on the `minutes` array as 1 (guard is awake) or 2 (guard is asleep)
   if action == "begins" or action == "wakes":
-    smin = 0 if hour == '23' else minute
-    for i in range(int(smin), 60, 1):
+    effective_start_minute = 0 if hour == '23' else minute
+    for i in range(int(effective_start_minute), 60, 1):
       datemap[datestr]['minutes'][i] = 1
   elif action == "falls":
-    smin = 0 if hour == '23' else minute
-    for i in range(int(smin), 60, 1):
+    effective_start_minute = 0 if hour == '23' else minute
+    for i in range(int(effective_start_minute), 60, 1):
       datemap[datestr]['minutes'][i] = 2
 
-# Run through datemap and create a new dict, where key is each unique guard number
-# and the value is their total minutes asleep
-guardmap = {}
+# Run through datemap and build a new dict, where key = guard number and value = guard's total minutes asleep
+guard_activity_map = {}
 for c in datemap.keys():
-  gn = datemap[c]['guard_number'][1:]
+  guard_number = datemap[c]['guard_number'][1:]
   minutes_sleeping = datemap[c]['minutes'].count(2)
-  if gn in guardmap:
-    guardmap[gn] += minutes_sleeping
+  if guard_number in guard_activity_map:
+    guard_activity_map[guard_number] += minutes_sleeping
   else:
-    guardmap[gn] = minutes_sleeping
+    guard_activity_map[guard_number] = minutes_sleeping
 
 # Find the sleepiest guard by getting the highest value in the guardmap and returning its key. Bad guard! You're fired!
 sleepiest_guard = -1
 highest = 0
-for c in guardmap:
-  if guardmap[c] > highest:
-    highest = guardmap[c]
+for c in guard_activity_map:
+  if guard_activity_map[c] > highest:
+    highest = guard_activity_map[c]
     sleepiest_guard = c
 
 # Run through the datemap again looking for every day where this guard was on duty and pulling out the `minutes` arrays
-this_guards_activity = []
+sleepiest_guards_activity = []
 for c in datemap:
   entry = datemap[c]
   if entry['guard_number'][1:] == sleepiest_guard:
-    this_guards_activity.append(entry['minutes'])
+    sleepiest_guards_activity.append(entry['minutes'])
 
 # Run through the list of all hour-long periods that guard was on duty, and calculate, for each minute, how many times
 # the guard was observed to be asleep on that minute
-minutes = [0] * 60
-for i in this_guards_activity:
+times_observed_asleep_by_minute = [0] * 60
+for i in sleepiest_guards_activity:
   for j in range(0, 60, 1):
     if i[j] == 2:
-      minutes[j] += 1
+      times_observed_asleep_by_minute[j] += 1
 
 # Find the minute with the highest sleep frequency...
-sleepiest_minute = minutes.index(max(minutes))
+sleepiest_minute = times_observed_asleep_by_minute.index(max(times_observed_asleep_by_minute))
 
 # ¡Ole!
 print(str(int(sleepiest_guard) * sleepiest_minute))
