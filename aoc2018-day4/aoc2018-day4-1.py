@@ -37,12 +37,10 @@ for line in data:
 
   # Mark the minutes on the `minutes` array as 1 (guard is awake) or 2 (guard is asleep)
   if action == "begins" or action == "wakes":
-    effective_start_minute = 0 if hour == '23' else minute
-    for i in range(int(effective_start_minute), 60, 1):
+    for i in range(int(minute), 60, 1):
       datemap[datestr]['minutes'][i] = 1
   elif action == "falls":
-    effective_start_minute = 0 if hour == '23' else minute
-    for i in range(int(effective_start_minute), 60, 1):
+    for i in range(int(minute), 60, 1):
       datemap[datestr]['minutes'][i] = 2
 
 # Run through datemap and build a new dict, where key = guard number and value = guard's total minutes asleep
