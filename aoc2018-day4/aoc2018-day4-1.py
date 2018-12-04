@@ -7,18 +7,14 @@ datemap = {}
 for line in data:
   tokens = line.split(" ")
 
-  date_tokens = line[1:12].split("-")
-  year, month, day = int(date_tokens[0]), int(date_tokens[1]), int(date_tokens[2])
-
+  date = line[1:12].split("-")
+  year, month, day = int(date[0]), int(date[1]), int(date[2])
   time = line[12:17]
   hour, minute = time.split(":")[0], time.split(":")[1]
-  
-  action = tokens[len(tokens)-2]
 
   # If a guard started their shift at 23:xx, that shift actually corresponds to the following day. Let's wrangle
   # the date to accommodate this, and shift the time forward to 00:00 as we don't care about the preceding minutes
   if int(hour) == 23:
-    hour = 0
     minute = 0
     day += 1
   if (day == 29 and month == 2) or (day == 31 and month in [4, 6, 9, 11]) or day == 32:
@@ -36,7 +32,7 @@ for line in data:
 
   # Mark the minutes on the `minutes` array as 1 (guard is awake) or 2 (guard is asleep)
   for i in range(int(minute), 60, 1):
-    datemap[datestr]['minutes'][i] = 1 if action in ["begins", "wakes"] else 2
+    datemap[datestr]['minutes'][i] = 1 if any(x in line for x in ["begins", "wakes"]) else 2
 
 # Run through datemap and build a new dict, where key = guard number and value = guard's total minutes asleep
 guard_activity_map = {}
@@ -74,5 +70,4 @@ for i in sleepiest_guards_activity:
 # Find the minute with the highest sleep frequency...
 sleepiest_minute = times_observed_asleep_by_minute.index(max(times_observed_asleep_by_minute))
 
-# ¡Ole!
-print(str(int(sleepiest_guard) * sleepiest_minute))
+print('Solution: ' + str(int(sleepiest_guard) * sleepiest_minute))
