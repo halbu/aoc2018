@@ -1,5 +1,4 @@
 data = [str.rstrip(l) for l in open('./aoc2018-day4.data', "r")]
-# data = [str.rstrip(l) for l in open('./test.data', "r")]
 data.sort()
 
 # First of all we're going to build a great big dict of dates that contains all the relevant info about a date.
@@ -26,9 +25,9 @@ for line in data:
     day = 1
     month += 1
 
-  # Add this date to our map if it isn't already there, initialise the minutes array,
+  # Add this date to our map if it isn't already there, initialise the `minutes` array,
   # and tag it with the guard's number if there is a guard number present
-  datestr = str(year)+'-'+str(month)+'-'+str(day)
+  datestr = str(year) + '-' + str(month) + '-' + str(day)
   if datestr not in datemap:
     datemap[datestr] = {}
     datemap[datestr]['minutes'] = [0] * 60
@@ -36,12 +35,8 @@ for line in data:
     datemap[datestr]['guard_number'] = tokens[len(tokens)-3]
 
   # Mark the minutes on the `minutes` array as 1 (guard is awake) or 2 (guard is asleep)
-  if action == "begins" or action == "wakes":
-    for i in range(int(minute), 60, 1):
-      datemap[datestr]['minutes'][i] = 1
-  elif action == "falls":
-    for i in range(int(minute), 60, 1):
-      datemap[datestr]['minutes'][i] = 2
+  for i in range(int(minute), 60, 1):
+    datemap[datestr]['minutes'][i] = 1 if action in ["begins", "wakes"] else 2
 
 # Run through datemap and build a new dict, where key = guard number and value = guard's total minutes asleep
 guard_activity_map = {}

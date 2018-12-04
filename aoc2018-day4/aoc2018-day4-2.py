@@ -25,9 +25,9 @@ for line in data:
     day = 1
     month += 1
 
-  # Add this date to our map if it isn't already there, initialise the minutes array,
+  # Add this date to our map if it isn't already there, initialise the `minutes` array,
   # and tag it with the guard's number if there is a guard number present
-  datestr = str(year)+'-'+str(month)+'-'+str(day)
+  datestr = str(year) + '-' + str(month) + '-' + str(day)
   if datestr not in datemap:
     datemap[datestr] = {}
     datemap[datestr]['minutes'] = [0] * 60
@@ -38,7 +38,7 @@ for line in data:
   for i in range(int(minute), 60, 1):
     datemap[datestr]['minutes'][i] = 1 if action in ["begins", "wakes"] else 2
 
-# Run through datemap and build a new dict, where key = guard number, value = array of int[60] representing minutes
+# Run through datemap and build a new dict, where key = guard number, value = array of int[60] representing minutes.
 # For each entry in the datemap, look up the associated guard in the new dict and increment every minute in the array
 # where that guard was observed to be asleep
 guard_sleep_map = {}
@@ -62,4 +62,4 @@ for g in guard_sleep_map:
       answer_minute = i
       highest_frequency = guard_sleep_map[g][i]
 
-print('Solution: guard ' + str(answer_guard) + ', minute ' + str(answer_minute))
+print('Solution: ' + str(int(answer_guard) * answer_minute))
