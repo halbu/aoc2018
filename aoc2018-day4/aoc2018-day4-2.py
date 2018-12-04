@@ -1,7 +1,4 @@
-## sleepiest minute is 45
-
 data = [str.rstrip(l) for l in open('./aoc2018-day4.data', "r")]
-# data = [str.rstrip(l) for l in open('./test.data', "r")]
 data.sort()
 
 # First of all we're going to build a great big dict of dates that contains all the relevant info about a date.
@@ -59,11 +56,14 @@ for c in datemap.keys():
     if datemap[c]['minutes'][i] == 2:
       guard_sleep_map[guard_number][i] += 1
 
-sleepiest_minute_ever = 0
+answer_guard = ""
+answer_minute, highest_frequency = -1, -1
+
 for g in guard_sleep_map:
   for i in range(0, 60, 1):
-    if guard_sleep_map[g][i] > sleepiest_minute_ever:
-      print(str(g) + ' was asleep ' + str(guard_sleep_map[g][i]) + ' times on minute ' + str(i) + '.')
-      sleepiest_minute_ever = guard_sleep_map[g][i]
+    if guard_sleep_map[g][i] > highest_frequency:
+      answer_guard = g
+      answer_minute = i
+      highest_frequency = guard_sleep_map[g][i]
 
-print('^^ this is the final answer!')
+print('Solution: guard ' + str(answer_guard) + ', minute ' + str(answer_minute))
