@@ -1,5 +1,4 @@
 import re
-import datetime
 
 polymer = [str.rstrip(l) for l in open('./aoc2018-day5.data', "r")][0]
 lengths = []
