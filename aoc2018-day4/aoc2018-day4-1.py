@@ -1,5 +1,4 @@
 data = [str.rstrip(l) for l in open('./aoc2018-day4.data', "r")]
-# data = [str.rstrip(l) for l in open('./test.data', "r")]
 data.sort()
 
 # First of all we're going to build a great big dict of dates that contains all the relevant info about a date.
@@ -8,27 +7,23 @@ datemap = {}
 for line in data:
   tokens = line.split(" ")
 
-  date_tokens = line[1:12].split("-")
-  year, month, day = int(date_tokens[0]), int(date_tokens[1]), int(date_tokens[2])
-
+  date = line[1:12].split("-")
+  year, month, day = int(date[0]), int(date[1]), int(date[2])
   time = line[12:17]
   hour, minute = time.split(":")[0], time.split(":")[1]
-  
-  action = tokens[len(tokens)-2]
 
   # If a guard started their shift at 23:xx, that shift actually corresponds to the following day. Let's wrangle
   # the date to accommodate this, and shift the time forward to 00:00 as we don't care about the preceding minutes
   if int(hour) == 23:
-    hour = 0
     minute = 0
     day += 1
   if (day == 29 and month == 2) or (day == 31 and month in [4, 6, 9, 11]) or day == 32:
     day = 1
     month += 1
 
-  # Add this date to our map if it isn't already there, initialise the minutes array,
+  # Add this date to our map if it isn't already there, initialise the `minutes` array,
   # and tag it with the guard's number if there is a guard number present
-  datestr = str(year)+'-'+str(month)+'-'+str(day)
+  datestr = str(year) + '-' + str(month) + '-' + str(day)
   if datestr not in datemap:
     datemap[datestr] = {}
     datemap[datestr]['minutes'] = [0] * 60
@@ -36,12 +31,8 @@ for line in data:
     datemap[datestr]['guard_number'] = tokens[len(tokens)-3]
 
   # Mark the minutes on the `minutes` array as 1 (guard is awake) or 2 (guard is asleep)
-  if action == "begins" or action == "wakes":
-    for i in range(int(minute), 60, 1):
-      datemap[datestr]['minutes'][i] = 1
-  elif action == "falls":
-    for i in range(int(minute), 60, 1):
-      datemap[datestr]['minutes'][i] = 2
+  for i in range(int(minute), 60, 1):
+    datemap[datestr]['minutes'][i] = 1 if any(x in line for x in ["begins", "wakes"]) else 2
 
 # Run through datemap and build a new dict, where key = guard number and value = guard's total minutes asleep
 guard_activity_map = {}
@@ -79,5 +70,4 @@ for i in sleepiest_guards_activity:
 # Find the minute with the highest sleep frequency...
 sleepiest_minute = times_observed_asleep_by_minute.index(max(times_observed_asleep_by_minute))
 
-# ¡Ole!
-print(str(int(sleepiest_guard) * sleepiest_minute))
+print('Solution: ' + str(int(sleepiest_guard) * sleepiest_minute))
