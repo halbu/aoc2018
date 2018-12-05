@@ -5,8 +5,8 @@ lengths = []
 
 def main():
   for letter in list('abcdefghijklmnopqrstuvwxyz'):
-    reacted = list(fully_react(polymer, letter))
-    length = get_reduced_length(reacted)
+    fully_reacted_polymer = list(fully_react(polymer, letter))
+    length = get_reduced_length(fully_reacted_polymer)
     lengths.append(length)
     print('Processed ' + letter + '.' * (ord(letter) - 94))
   
