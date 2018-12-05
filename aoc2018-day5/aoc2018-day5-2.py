@@ -1,13 +1,12 @@
 import re
 import datetime
 
-data = [str.rstrip(l) for l in open('./aoc2018-day5.data', "r")][0]
-alphabet = list('abcdefghijklmnopqrstuvwxyz')
+polymer = [str.rstrip(l) for l in open('./aoc2018-day5.data', "r")][0]
 lengths = []
 
 def main():
-  for letter in alphabet:
-    reacted = list(fully_react(data, letter))
+  for letter in list('abcdefghijklmnopqrstuvwxyz'):
+    reacted = list(fully_react(polymer, letter))
     length = get_reduced_length(reacted)
     lengths.append(length)
     print('Processed ' + letter + '.' * (ord(letter) - 94))
@@ -29,8 +28,7 @@ def react(polymer):
   return out
 
 def fully_react(polymer, char):
-  pattern = r'[' + str.upper(char) + char + ']'
-  return re.sub(pattern, '', ''.join(polymer))
+  return re.sub(r'[' + str.upper(char) + char + ']', '', ''.join(polymer))
 
 def get_reduced_length(polymer):
   r = react(polymer)

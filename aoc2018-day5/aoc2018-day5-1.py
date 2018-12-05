@@ -1,12 +1,12 @@
 def main():
-  data = list([str.rstrip(l) for l in open('./aoc2018-day5.data', "r")][0])
+  polymer = list([str.rstrip(l) for l in open('./aoc2018-day5.data', "r")][0])
 
-  r = react(data)
-  while(r != data):
-    r = data
-    data = react(data)
+  r = react(polymer)
+  while(r != polymer):
+    r = polymer
+    polymer = react(polymer)
 
-  print('Solution: ' + str(len(''.join(data))))
+  print('Solution: ' + str(len(''.join(polymer))))
 
 def react(polymer):
   out = ""
