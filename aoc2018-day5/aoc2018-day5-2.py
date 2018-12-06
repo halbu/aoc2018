@@ -6,32 +6,24 @@ lengths = []
 def main():
   for letter in list('abcdefghijklmnopqrstuvwxyz'):
     fully_reacted_polymer = list(fully_react(polymer, letter))
-    length = get_reduced_length(fully_reacted_polymer)
-    lengths.append(length)
-    print('Processed ' + letter + '.' * (ord(letter) - 94))
-  
-  print('Solution: ' + str(min(lengths)))
+    lengths.append(react(fully_reacted_polymer))
 
+  print('Solution: ' + str(min(lengths)))
+  
 def react(polymer):
-  out = ""
   i = 0
+  out = []
   while i < len(polymer):
-    if i < len(polymer)-1 and (abs(ord(polymer[i]) - ord(polymer[i+1])) == 32):
-      i += 2
+    if i < len(polymer)-1 and out and (abs(ord(polymer[i]) - ord(out[len(out)-1])) == 32):
+      if out:
+        out.pop()
     else:
-      out = out + polymer[i]
-      i += 1
-  return out
+      out.append(polymer[i])
+    i += 1
+  return len(out)
 
 def fully_react(polymer, char):
   return re.sub(r'[' + str.upper(char) + char + ']', '', ''.join(polymer))
-
-def get_reduced_length(polymer):
-  r = react(polymer)
-  while(r != polymer):
-    r = polymer
-    polymer = react(polymer)
-  return len(''.join(polymer))
 
 if __name__ == '__main__':
   main()
