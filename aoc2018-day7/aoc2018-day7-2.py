@@ -8,9 +8,7 @@ for i in range(0, total_workers, 1):
   workers.append({'task': '.', 'time': 999})
 
 def main():
-  steps = list([str.rstrip(l) for l in open('./aoc2018-day7.data', "r")])
-  
-  for s in steps:
+  for s in list([str.rstrip(l) for l in open('./aoc2018-day7.data', "r")]):
     tokens = s.split(' ')
     if tokens[7] not in deps:
       deps[tokens[7]] = [tokens[1]]
@@ -24,7 +22,7 @@ def main():
       commence_step(get_next_step())
     advance_time()
 
-  print(time)
+  print('Solution: ' + str(time))
 
 def advance_time():
   global time
@@ -37,15 +35,12 @@ def advance_time():
   time += 1
 
 def get_next_step():
-  ordered = sorted([k for k in deps.keys()])
-  for o in ordered:
-    if not deps[o] and o not in progressing:
-      return o
+  for o in sorted([k for k in deps.keys() if not deps[k] and k not in progressing]):
+    return o
 
 def get_idle_worker():
-  for k in workers:
-    if k['task'] == '.':
-      return k
+  for k in [k for k in workers if k['task'] == '.']:
+    return k
 
 def commence_step(c):
   w = get_idle_worker()
