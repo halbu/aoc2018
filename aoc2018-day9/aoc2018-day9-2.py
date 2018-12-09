@@ -1,6 +1,6 @@
 data = ([l for l in open('./aoc2018-day9.data', "r")])[0].split(' ')
 
-np, lmpv = int(data[0]), int(data[6]) # no. players, last marble placed value
+np, lmpv = int(data[0]), int(data[6]) * 100 # no. players, last marble placed value
 players = [0] * np
 ci, cp = 0, 0 # current index, current player
 circle = []
@@ -17,7 +17,7 @@ class CLLNode:
 
   def get_next(self):
     return self.next
-    
+
 def insert_after_current(i):
   global cnode
   n = CLLNode(i)
@@ -31,7 +31,7 @@ def delete():
   global cnode
   cnode.prev.next = cnode.next
   cnode.next.prev = cnode.prev
-  cnode = cnode.prev
+  cnode = cnode.next
 
 def main():
   global cp
@@ -49,13 +49,12 @@ def main():
         cnode = cnode.get_prev()
       players[cp] += cnode.data
       delete()
-      cnode = cnode.get_next()
     else:
       cnode = cnode.get_next()
       insert_after_current(i)
     cp = cp + 1 if cp + 1 < len(players) else 0
 
   print('Solution: ' + str(max(players)))
-  
+
 if __name__ == '__main__':
   main()
