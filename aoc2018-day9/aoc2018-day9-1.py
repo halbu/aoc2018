@@ -10,17 +10,17 @@ def main():
 
   for i in range(0, lmpv + 1):
     place_marble(i)
-    cp = cp + 1 if cp + 1 < len(players) else 0
+    cp = (cp + 1) % len(players)
   print('Solution: ' + str(max(players)))
 
 def place_marble(value):
   global ci
 
   if value % 23 != 0:
-    ci = ci - len(circle) + 2 if ci + 2 > len(circle) else ci + 2
+    ci = (ci + 2) % len(circle)
 
   if value and value % 23 == 0:
-    ci = ci + len(circle) - 7 if ci - 7 < 0 else ci - 7
+    ci = (ci - 7) % len(circle)
     players[cp] += value + circle[ci]
     del circle[ci]
   else:
