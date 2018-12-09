@@ -10,9 +10,7 @@ def main():
 
   for i in range(0, lmpv + 1):
     place_marble(i)
-    cp += 1
-    if cp == len(players):
-      cp = 0
+    cp = cp + 1 if cp + 1 < len(players) else 0
   print('Solution: ' + str(max(players)))
 
 def place_marble(value):
