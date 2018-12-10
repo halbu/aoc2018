@@ -6,17 +6,13 @@ ci, cp = 0, 0 # current index, current player
 circle = []
 cnode = None # ref to current circular linked list node
 
+# Clunky handrolled circular linked list - about 10x slower than Python's
+# deque, but arrives at the solution in ~20s
 class CLLNode:
   def __init__(self, data):
     self.data = data
     self.next = None
     self.prev = None
-
-  def get_prev(self):
-    return self.prev
-
-  def get_next(self):
-    return self.next
 
 def insert_after_current(i):
   global cnode
@@ -46,13 +42,13 @@ def main():
     if i % 23 == 0:
       players[cp] += i
       for n in range(7):
-        cnode = cnode.get_prev()
+        cnode = cnode.prev
       players[cp] += cnode.data
       delete()
     else:
-      cnode = cnode.get_next()
+      cnode = cnode.next
       insert_after_current(i)
-    cp = cp + 1 if cp + 1 < len(players) else 0
+    cp = (cp + 1) % len(players)
 
   print('Solution: ' + str(max(players)))
 
