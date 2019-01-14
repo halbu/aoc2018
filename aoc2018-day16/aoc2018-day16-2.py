@@ -1,8 +1,7 @@
-import random
 data = [l.strip() for l in open('./aoc2018-day16.data', "r") if l != "\n"]
 program_data = [l.strip() for l in open('./aoc2018-day16-2.data', "r") if l != "\n"]
 i, program_instruction_index = 0, 0
-M, O = {}, {}
+M = {}
 allcodes = ['addr', 'addi', 'mulr', 'muli', 'banr', 'bani', 'borr', 'bori', 'setr', 'seti', 'gtir', 'gtri', 'gtrr', 'eqir', 'eqri', 'eqrr']
 
 def next_line():
@@ -45,7 +44,7 @@ def main():
   registers = [0, 0, 0, 0]
 
   while is_next_program_instruction():
-    instruction = next_instruction()
+    instruction = next_program_instruction()
     instruction_arr = [int(e) for e in instruction.split(' ')]
     registers = do_op(known_ops[instruction_arr[0]], instruction_arr, registers)
 
