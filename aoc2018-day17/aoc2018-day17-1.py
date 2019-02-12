@@ -1,5 +1,4 @@
 data = [l.strip() for l in open('./aoc2018-day17.data', "r") if l != "\n"]
-# data = [l.strip() for l in open('./test.data', "r") if l != "\n"]
 scan, stack = [], []
 xmin, xmax, ymin, ymax = -1, -1, -1, -1
 
@@ -39,57 +38,40 @@ def simulate():
         fill_and_spill(x, y)
 
 def fully_bounded(x, y):
-  l = x - 1
-  r = x + 1
-  while l >= 0 and scan[l][y] != '#':
-    if (scan[l][y + 1] != '#' and scan[l][y + 1] != '~'):
-      return False
-    else:
-      l -= 1
-  while r <= xmax and scan[r][y] != '#':
-    if (scan[r][y + 1] != '#' and scan[r][y + 1] != '~'):
-      return False
-    else:
-      r += 1
+  for n in [-1, 1]:
+    tx = x + n
+    while tx >= 0 and tx <= xmax and scan[tx][y] != '#':
+      if (scan[tx][y + 1] != '#' and scan[tx][y + 1] != '~'):
+        return False
+      else:
+        tx += n
   return True
 
 def fill_row(x, y):
   global scan
   scan[x][y] = '~'
-  l = x - 1
-  r = x + 1
-  while scan[l][y] != '#':
-    scan[l][y] = '~'
-    l -= 1
-  while scan[r][y] != '#':
-    scan[r][y] = '~'
-    r += 1
+  for n in [-1, 1]:
+    tx = x + n
+    while scan[tx][y] != '#':
+      scan[tx][y] = '~'
+      tx += n
 
 def fill_and_spill(x, y):
   global scan
   global stack
   scan[x][y] = '|'
-  l = x - 1
-  r = x + 1
-  while l >= 0 and scan[l][y] != '#':
-    scan[l][y] = '|'
-    if scan[l][y + 1] != '#' and scan[l][y + 1] != '~':
-      stack.append({'ins': 'pour', 'x': l, 'y': y})
-      break
-    l -= 1
-  while r <= xmax and scan[r][y] != '#':
-    scan[r][y] = '|'
-    if scan[r][y + 1] != '#' and scan[r][y + 1] != '~':
-      stack.append({'ins': 'pour', 'x': r, 'y': y})
-      break
-    r += 1
+  for n in [-1, 1]:
+    tx = x + n
+    while tx >=0 and tx <= xmax and scan[tx][y] != '#':
+      scan[tx][y] = '|'
+      if scan[tx][y + 1] != '#' and scan[tx][y + 1] != '~':
+        stack.append({'ins': 'pour', 'x': tx, 'y': y})
+        break
+      tx += n
 
 def setup():
   global scan
-  global xmin
-  global xmax
-  global ymin
-  global ymax
+  global xmin, xmax, ymin, ymax
   points = []
   for l in data:
     t1 = l.split(', ')[0].split('=')
