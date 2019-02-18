@@ -14,7 +14,7 @@ def main():
     for y in range (0, ty + 1):
       erosion_grid[x].append(get_erosion_level(get_geological_index(x, y)))
 
-  print_region_grid()
+  print('Solution: ' + str(calculate_total_risk()))
 
 # The geologic index can be determined using the first rule that applies from the list below:
 # The region at 0,0 (the mouth of the cave) has a geologic index of 0.
@@ -38,22 +38,12 @@ def get_geological_index(x, y):
 def get_erosion_level(geologic_index):
   return (geologic_index + depth) % 20183
 
-def print_region_grid():
+def calculate_total_risk():
   total_risk = 0
   for y in range(0, ty + 1):
-    output = ""
     for x in range (0, tx + 1):
-      mytype = erosion_grid[x][y] % 3
-      total_risk += mytype
-      if mytype == 0:
-        output += '.'
-      if mytype == 1:
-        output += '='
-      if mytype == 2:
-        output += '|'
-    print(output)
-  print(' ')
-  print('Solution: ' + str(total_risk))
+      total_risk += erosion_grid[x][y] % 3
+  return total_risk
 
 if __name__ == '__main__':
   main()
