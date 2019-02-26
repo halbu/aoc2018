@@ -79,15 +79,15 @@
 26  seti 0 1 2    r[2] = 0 effectively JMP 1
 
 # AFAIK this is further setup?
-27	setr 2 1 5    r[5] = r[2]                                         # r[2] = 27
-28	mulr 5 2 5    r[5] *= r[2]                                        # 27 * 28 = 756
-29	addr 2 5 5    r[5] += r[2]                                        # 756 + 29 = 785
-30	mulr 2 5 5    r[5] *= r[2]                                        # 785 * 30 = 23550
-31	muli 5 14 5   r[5] *= 14                                          # 23550 * 14 = 329700
-32	mulr 5 2 5    r[5] *= r[2]                                        # 329700 * 32 = 10550400
-33	addr 4 5 4    r[4] += r[5]                                        # add 10550400 to register 4 (in practice r[4] = 10551394)
-34	seti 0 6 0    r[0] = 0                                            # clear register 0
-35	seti 0 6 2    r[2] = 0                                            # JMP 1
+27  setr 2 1 5    r[5] = r[2]                                         # r[2] = 27
+28  mulr 5 2 5    r[5] *= r[2]                                        # 27 * 28 = 756
+29  addr 2 5 5    r[5] += r[2]                                        # 756 + 29 = 785
+30  mulr 2 5 5    r[5] *= r[2]                                        # 785 * 30 = 23550
+31  muli 5 14 5   r[5] *= 14                                          # 23550 * 14 = 329700
+32  mulr 5 2 5    r[5] *= r[2]                                        # 329700 * 32 = 10550400
+33  addr 4 5 4    r[4] += r[5]                                        # add 10550400 to register 4 (in practice r[4] = 10551394)
+34  seti 0 6 0    r[0] = 0                                            # clear register 0
+35  seti 0 6 2    r[2] = 0                                            # JMP 1
 
 # def do_op(opcode, input_a, input_b, output):
   # if opcode == 'addr':    r[output] = r[input_a] + r[input_b]
