@@ -55,28 +55,28 @@
 
 8   addi 1 1 1    r[1]++
 9   gtrr 1 4 5    r[5] = (r[1] > r[4]) ? 1 : 0
-10	addr 2 5 2    r[2] += r[5]  # this + previous line form conditional jump? if r[1] > r[4] then r[5] = 1 and this is JMP 12, else...
-11	seti 2 9 2    r[2] = 2      # ... JMP 3
+10  addr 2 5 2    r[2] += r[5]  # this + previous line form conditional jump? if r[1] > r[4] then r[5] = 1 and this is JMP 12, else...
+11  seti 2 9 2    r[2] = 2      # ... JMP 3
 
-12	addi 3 1 3    r[3]++
+12  addi 3 1 3    r[3]++
 
-13	gtrr 3 4 5    r[5] = (r[3] > r[4]) ? 1 : 0
-14	addr 5 2 2    conditional JMP 16                                  # if r[3] > r[4], JMP 16 else continue
-15	seti 1 6 2    r[2] = 1 (effectively JMP 2)
-16	mulr 2 2 2    r[2] = r[2] * r[2]                                  # JMP 256, in other words exit
+13  gtrr 3 4 5    r[5] = (r[3] > r[4]) ? 1 : 0
+14  addr 5 2 2    conditional JMP 16                                  # if r[3] > r[4], JMP 16 else continue
+15  seti 1 6 2    r[2] = 1 (effectively JMP 2)
+16  mulr 2 2 2    r[2] = r[2] * r[2]                                  # JMP 256, in other words exit
 
 # 17 onward (excepting 26) appears to just get executed once at startup
-17	addi 4 2 4    r[4] += 2                                           # register 4 = 2
-18	mulr 4 4 4    r[4] *= r[4]                                        # 2^2 = 4
-19	mulr 2 4 4    r[4] = r[4] * r[2]                                  # 4 * 19 = 76
-20	muli 4 11 4   r[4] *= 11                                          # 76 * 11 = 836
-21	addi 5 7 5    r[5] += 7                                           # register 5 = 7
-22	mulr 5 2 5    r[5] *= r[2]                                        # 7 * 22 = 154
-23	addi 5 4 5    r[5] += 4                                           # 154 + 4 = 158
-24	addr 4 5 4    r[4] = r[4] + r[5]                                  # register 4 (836) += register 5 (158) = 994
-25	addr 2 0 2    r[2] = r[2] + r[0]  effectively JMP (26 + r[0])     # r[0] == 1 initially so this (on first run at least) is JMP 27
+17  addi 4 2 4    r[4] += 2                                           # register 4 = 2
+18  mulr 4 4 4    r[4] *= r[4]                                        # 2^2 = 4
+19  mulr 2 4 4    r[4] = r[4] * r[2]                                  # 4 * 19 = 76
+20  muli 4 11 4   r[4] *= 11                                          # 76 * 11 = 836
+21  addi 5 7 5    r[5] += 7                                           # register 5 = 7
+22  mulr 5 2 5    r[5] *= r[2]                                        # 7 * 22 = 154
+23  addi 5 4 5    r[5] += 4                                           # 154 + 4 = 158
+24  addr 4 5 4    r[4] = r[4] + r[5]                                  # register 4 (836) += register 5 (158) = 994
+25  addr 2 0 2    r[2] = r[2] + r[0]  effectively JMP (26 + r[0])     # r[0] == 1 initially so this (on first run at least) is JMP 27
 
-26	seti 0 1 2    r[2] = 0 effectively JMP 1
+26  seti 0 1 2    r[2] = 0 effectively JMP 1
 
 # AFAIK this is further setup?
 27	setr 2 1 5    r[5] = r[2]                                         # r[2] = 27
