@@ -1,4 +1,4 @@
-data = [l.strip() for l in open('./aoc2018-day21.data', "r") if l != "\n"]
+data = [l.strip() for l in open('./aoc2018-day22.data', "r") if l != "\n"]
 depth, tx, ty = 0, 0, 0
 erosion_grid = []
 
