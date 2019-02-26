@@ -48,22 +48,22 @@
 
 3   mulr 3 1 5    r[5] = r[3] * r[1]
 4   eqrr 5 4 5    r[5] = (r[4] == r[5]) ? 1 : 0
-5   addr 5 2 2    JMP to + r[5]                     JMP to either 6 or 7
+5   addr 5 2 2    JMP to + r[5]                     # JMP to either 6 or 7
 6   addi 2 1 2    r[2] += 1 effectively JMP 8       # so, JMP 8 if r1 * r3 == r4
 
-7   addr 3 0 0    r[0] += r[3] # i suspect we're trying to sum the factors of the big constant number in register 4? [later edit: i was right!!]
+7   addr 3 0 0    r[0] += r[3] # i suspect we're trying to sum the factors of the constant in register 4? [later edit: i was right!!]
 
 8   addi 1 1 1    r[1]++
 9   gtrr 1 4 5    r[5] = (r[1] > r[4]) ? 1 : 0
-10	addr 2 5 2    r[2] += r[5] # this and the previous line form conditional jump? if r[1] > r[4] then r[5] = 1 and this is JMP 12, else...
-11	seti 2 9 2    r[2] = 2 (effectively JMP 3)
+10	addr 2 5 2    r[2] += r[5]  # this + previous line form conditional jump? if r[1] > r[4] then r[5] = 1 and this is JMP 12, else...
+11	seti 2 9 2    r[2] = 2      # ... JMP 3
 
 12	addi 3 1 3    r[3]++
 
 13	gtrr 3 4 5    r[5] = (r[3] > r[4]) ? 1 : 0
-14	addr 5 2 2    conditional JMP 16 (if r[3] > r[4], JMP 16 else continue)
+14	addr 5 2 2    conditional JMP 16                                  # if r[3] > r[4], JMP 16 else continue
 15	seti 1 6 2    r[2] = 1 (effectively JMP 2)
-16	mulr 2 2 2    r[2] = r[2] * r[2] (??) JMP 33...?
+16	mulr 2 2 2    r[2] = r[2] * r[2]                                  # JMP 256, in other words exit
 
 # 17 onward (excepting 26) appears to just get executed once at startup
 17	addi 4 2 4    r[4] += 2                                           # register 4 = 2
