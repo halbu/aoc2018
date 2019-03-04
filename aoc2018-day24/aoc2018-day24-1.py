@@ -1,5 +1,5 @@
 import math
-data = [l.strip() for l in open('./test.data', "r") if l != "\n"]
+data = [l.strip() for l in open('./aoc2018-day24.data', "r") if l != "\n"]
 immunes, infections = [], []
 
 def main():
@@ -16,29 +16,33 @@ def main():
       else:
         infections.append(parse_group_from_line(l))
 
-  # run the simulation
+  # run the simulation until one side is eliminated
   while len(immunes) > 0 and len(infections) > 0:
     get_targets()
     attack()
+    immunes = [i for i in immunes if i.units > 0]
+    infections = [i for i in infections if i.units > 0]
+
+  print('Solution:', sum(i.units for i in immunes + infections))
 
 def attack():
   combined = immunes + infections
   combined.sort(key=lambda x: x.init, reverse=True)
 
   for c in combined:
-    c.deal_damage()
+    if c.target:
+      c.deal_damage()
 
 def get_targets():
-  immunes.sort(key=lambda x: x.effpow())
-  infections.sort(key=lambda x: x.effpow())
-
   for i in immunes + infections:
     i.target = None
     i.targeted = False
 
+  immunes.sort(key=lambda x: x.effpow(), reverse=True)
+  infections.sort(key=lambda x: x.effpow(), reverse=True)
+
   for x in [[immunes, infections], [infections, immunes]]:
-    offense = x[0]
-    defense = x[1]
+    offense, defense = x[0], x[1]
 
     for i in offense:
       # get ALL possible targets
@@ -64,13 +68,10 @@ def get_targets():
 
       # if we STILL need to break ties, take the target with the highest initiative score
       if len(targets) > 1:
-        targets = [t for t in targets if t.init == max(t.initiative for t in targets)]
+        targets = [t for t in targets if t.init == max(t.init for t in targets)]
 
       # tag the opposing group as having been targeted this round and store it as the target
       final_target = targets[0]
-      print(final_target.hp)
-      print(final_target.units)
-      print(final_target.effpow())
       final_target.targeted = True
       i.target = final_target
 
@@ -118,13 +119,8 @@ class Group:
 
   def deal_damage(self):
     dmg = self.target.potential_damage(self.effpow(), self.atktype)
-    self.target.take_dmg(dmg)
-
-  def take_dmg(self, dmg):
-    kills = math.floor(dmg / self.hp)
-    if kills > self.units:
-      kills = self.units
-    self.units = max(0, self.units - kills)
+    kills = min(self.target.units, math.floor(dmg/self.target.hp))
+    self.target.units = max(0, self.target.units - kills)
 
 if __name__ == '__main__':
   main()
