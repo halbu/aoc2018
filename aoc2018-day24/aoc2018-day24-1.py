@@ -1,9 +1,9 @@
 import math
-data = [l.strip() for l in open('./aoc2018-day24.data', "r") if l != "\n"]
-immune_group, infection_group = [], []
+data = [l.strip() for l in open('./test.data', "r") if l != "\n"]
+immunes, infections = [], []
 
 def main():
-  global immune_group, infection_group
+  global immunes, infections
   
   # setup
   side = 'immune'
@@ -12,142 +12,119 @@ def main():
       side = 'infect'
     elif l[0].isdigit():
       if side == 'immune':
-        immune_group.append(parse_group_from_line(l))
+        immunes.append(parse_group_from_line(l))
       else:
-        infection_group.append(parse_group_from_line(l))
+        infections.append(parse_group_from_line(l))
 
   # run the simulation
-  while len(immune_group) > 0 and len(infection_group) > 0:
+  while len(immunes) > 0 and len(infections) > 0:
     get_targets()
     attack()
-    immune_group = [i for i in immune_group if i['units'] > 0]
-    infection_group = [i for i in infection_group if i['units'] > 0]
-    untag_all()
-
-  print(sum([i['units'] for i in infection_group]))
 
 def attack():
-  global immune_group, infection_group
-  combined_group = immune_group + infection_group
-  combined_group.sort(key=lambda x: x['initiative'], reverse=True)
+  combined = immunes + infections
+  combined.sort(key=lambda x: x.init, reverse=True)
 
-  for i in combined_group:
-    if i['target'] == None:
-      continue
-
-    total_attack = i['attack_power'] * i['units']
-    if i['attack_type'] in i['target']['weakness']:
-      total_attack *= 2
-    if i['target']['immunity'] and i['attack_type'] in i['target']['immunity']:
-      total_attack = 0
-
-    kills = math.floor(total_attack / i['target']['hp'])
-    i['target']['units'] -= kills
-
-def untag_all():
-  global immune_group, infection_group
-  
-  # untag and untarget everything
-  for i in immune_group:
-    i['targeted'] = False
-    i['target'] = None
-  for i in infection_group:
-    i['targeted'] = False
-    i['target'] = None
+  for c in combined:
+    c.deal_damage()
 
 def get_targets():
-  untag_all()
+  immunes.sort(key=lambda x: x.effpow())
+  infections.sort(key=lambda x: x.effpow())
 
-  # get immune group targets
-  immune_group.sort(key=lambda x: (x['units'] * x['attack_power'], x['initiative']), reverse=True)
+  for i in immunes + infections:
+    i.target = None
+    i.targeted = False
 
-  for i in immune_group:
-    i['target'] = None
-    potential_targets = [g for g in infection_group if not g['targeted']]
-    mpd = 0
-    for p in potential_targets:
-      dam = i['units'] * i['attack_power']
-      if i['attack_type'] in p['weakness']:
-        dam *= 2
-      if i['attack_type'] in p['immunity']:
-        dam = 0
-      mpd = max(dam, mpd)
-    
-    new_potential_targets = []
+  for x in [[immunes, infections], [infections, immunes]]:
+    offense = x[0]
+    defense = x[1]
 
-    for p in potential_targets:
-      dam = i['units'] * i['attack_power']
-      if i['attack_type'] in p['weakness']:
-        dam *= 2
-      if i['attack_type'] in p['immunity']:
-        dam = 0
-      if dam == mpd:
-        new_potential_targets.append(p)
+    for i in offense:
+      # get ALL possible targets
+      targets = [j for j in defense if not j.targeted]
 
-    new_potential_targets.sort(key=lambda x: (x['units'] * x['attack_power'], x['initiative']), reverse=True)
+      # if there exist no viable targets then do nothing
+      if len(targets) == 0:
+        continue
 
-    if mpd > 0:
-      i['target'] = new_potential_targets[0]
-      i['target']['targeted'] = True
+      # filter for only those targets to whom we would deal the most possible total damage
+      max_dmg = max(t.potential_damage(i.effpow(), i.atktype) for t in targets)
+      
+      # if we can deal no damage then do nothing
+      if (max_dmg == 0):
+        continue
 
-  # get infection group targets
-  infection_group.sort(key=lambda x: (x['units'] * x['attack_power'], x['initiative']), reverse=True)
+      targets = [t for t in targets if t.potential_damage(i.effpow(), i.atktype) == max_dmg]
+      
+      # if we need to break ties, filter by the greatest opposing effective power
+      if len(targets) > 1:
+        max_opp_effpow = max(t.effpow() for t in targets)
+        targets = [t for t in targets if t.effpow() == max_opp_effpow]
 
-  for i in infection_group:
-    i['target'] = None
-    potential_targets = [g for g in immune_group if not g['targeted']]
-    mpd = 0
-    for p in potential_targets:
-      dam = i['units'] * i['attack_power']
-      if i['attack_type'] in p['weakness']:
-        dam *= 2
-      mpd = max(dam, mpd)
-    
-    new_potential_targets = []
+      # if we STILL need to break ties, take the target with the highest initiative score
+      if len(targets) > 1:
+        targets = [t for t in targets if t.init == max(t.initiative for t in targets)]
 
-    for p in potential_targets:
-      dam = i['units'] * i['attack_power']
-      if i['attack_type'] in p['weakness']:
-        dam *= 2
-      if dam == mpd:
-        new_potential_targets.append(p)
-
-    new_potential_targets.sort(key=lambda x: (x['units'] * x['attack_power'], x['initiative']), reverse=True)
-
-    if mpd > 0:
-      i['target'] = new_potential_targets[0]
-      i['target']['targeted'] = True
+      # tag the opposing group as having been targeted this round and store it as the target
+      final_target = targets[0]
+      print(final_target.hp)
+      print(final_target.units)
+      print(final_target.effpow())
+      final_target.targeted = True
+      i.target = final_target
 
 def parse_group_from_line(l):
   general_data = l.split(' with an attack that does ')[0]
   attack_data = l.split(' with an attack that does ')[1]
   
-  units = general_data.split(' ')[0]
-  hp = general_data.split(' ')[4]
-  weakness, immunity = [], []
+  units = int(general_data.split(' ')[0])
+  hp = int(general_data.split(' ')[4])
 
+  weakness, immunity = [], []
   if 'weak' in general_data:
     weakness = general_data.split('weak to ')[1].split(';')[0].split(')')[0].split(', ')
   if 'immune' in general_data:
     immunity = general_data.split('immune to ')[1].split(';')[0].split(')')[0].split(', ')
 
-  attack_power = attack_data.split(' ')[0]
+  attack_power = int(attack_data.split(' ')[0])
   attack_type = attack_data.split(' ')[1]
-  initiative = attack_data.split(' ')[5]
-    
-  # I should probably make this an actual class but I can't be bothered
-  return {
-    'units': int(units),
-    'hp': int(hp),
-    'weakness': weakness,
-    'immunity': immunity,
-    'attack_power': int(attack_power),
-    'attack_type': attack_type,
-    'initiative': int(initiative),
-    'targeted': False,
-    'acted': False,
-    'target': None
-  }
+  initiative = int(attack_data.split(' ')[5])
+
+  return Group(units, hp, weakness, immunity, attack_power, attack_type, initiative)
   
+class Group:
+  def __init__(self, units, hp, weak, immune, atkpow, atktype, init):
+    self.units = units
+    self.hp = hp
+    self.weak = weak
+    self.immune = immune
+    self.atkpow = atkpow
+    self.atktype = atktype
+    self.init = init
+    self.targeted = False
+    self.target = None
+
+  def effpow(self):
+    return self.units * self.atkpow
+
+  def potential_damage(self, enemy_effpow, enemy_atktype):
+    if enemy_atktype in self.weak:
+      return enemy_effpow * 2
+    elif enemy_atktype in self.immune:
+      return 0
+    else:
+      return enemy_effpow
+
+  def deal_damage(self):
+    dmg = self.target.potential_damage(self.effpow(), self.atktype)
+    self.target.take_dmg(dmg)
+
+  def take_dmg(self, dmg):
+    kills = math.floor(dmg / self.hp)
+    if kills > self.units:
+      kills = self.units
+    self.units = max(0, self.units - kills)
+
 if __name__ == '__main__':
   main()
